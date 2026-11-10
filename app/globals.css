@@ -1,0 +1,129 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-white font-sans text-ink antialiased;
+  }
+  :focus-visible {
+    outline: 2px solid #12824f;
+    outline-offset: 2px;
+  }
+  input,
+  select,
+  textarea {
+    font-size: 16px; /* stops iOS from zooming on focus */
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex h-12 items-center justify-center gap-2 rounded-2xl px-5 text-[15px] font-semibold transition active:scale-[.98] disabled:opacity-50 disabled:active:scale-100;
+  }
+  .btn-primary {
+    @apply btn bg-brand-600 text-white hover:bg-brand-700;
+  }
+  .btn-soft {
+    @apply btn bg-brand-50 text-brand-700 hover:bg-brand-100;
+  }
+  .btn-outline {
+    @apply btn border border-line bg-white text-ink hover:bg-mist;
+  }
+  .input {
+    @apply h-12 w-full rounded-2xl border border-line bg-white px-4 text-ink placeholder:text-ink/35 focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-500/15;
+  }
+  .label {
+    @apply mb-1.5 block text-sm font-semibold text-ink/80;
+  }
+  .chip {
+    @apply inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full border border-line bg-white px-4 text-sm font-medium text-ink/80 transition hover:border-ink/30;
+  }
+  .chip-on {
+    @apply border-brand-600 bg-brand-600 text-white hover:border-brand-600;
+  }
+  .card {
+    @apply rounded-3xl border border-line/70 bg-white shadow-card;
+  }
+  .h-section {
+    @apply font-display text-xl font-bold tracking-tight;
+  }
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #edf1ee 25%, #f8faf8 50%, #edf1ee 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.3s linear infinite;
+}
+
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+@keyframes page {
+  /* opacity only: a transform here would re-anchor position:fixed bars inside the page */
+  from {
+    opacity: 0;
+  }
+}
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes sheet {
+  from {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+}
+@keyframes toast {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.96);
+  }
+}
+@keyframes pop {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.08);
+  }
+}
+.animate-page {
+  animation: page 0.28s ease-out;
+}
+.animate-fade {
+  animation: fade 0.2s ease-out;
+}
+.animate-sheet {
+  animation: sheet 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.animate-toast {
+  animation: toast 0.22s ease-out;
+}
+.animate-pop {
+  animation: pop 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
