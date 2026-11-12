@@ -25,7 +25,7 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-line/70 bg-white/90 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-6xl items-center gap-3 px-4">
+      <div className="mx-auto flex h-16 max-w-6xl items-center gap-2 px-4 md:gap-3">
         {!top && (
           <button
             type="button"
@@ -40,7 +40,7 @@ export function Header() {
           <Logo />
         </div>
 
-        <nav className="ml-6 hidden items-center gap-1 md:flex">
+        <nav className="ml-2 hidden items-center gap-1 whitespace-nowrap md:flex lg:ml-6">
           {TABS.filter((x) => x.href !== '/post').map((x) => {
             const on = x.href === '/' ? pathname === '/' : pathname.startsWith(x.href);
             return (
@@ -68,7 +68,7 @@ export function Header() {
               </span>
             )}
           </Link>
-          <Link href="/post" className="btn-primary hidden !h-10 !rounded-full !px-4 !text-sm md:inline-flex">
+          <Link href="/post" className="btn-primary hidden !h-10 whitespace-nowrap !rounded-full !px-4 !text-sm md:inline-flex">
             <Plus size={17} strokeWidth={2.6} /> {t('Post an ad')}
           </Link>
         </div>

@@ -14,9 +14,10 @@ import {
   type Report,
   type Status,
 } from './data';
-import { AM } from './i18n';
+import { AM, OM } from './i18n';
 
-export type Lang = 'en' | 'am';
+export type Lang = 'en' | 'am' | 'om';
+const DICT: Record<Lang, Record<string, string> | null> = { en: null, am: AM, om: OM };
 type Vars = Record<string, string | number>;
 
 interface Store {
@@ -71,7 +72,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const t = useCallback(
     (s: string, vars?: Vars) => {
-      let out = lang === 'am' ? AM[s] ?? s : s;
+      let out = DICT[lang]?.[s] ?? s;
       if (vars) for (const k of Object.keys(vars)) out = out.replace(`{${k}}`, String(vars[k]));
       return out;
     },

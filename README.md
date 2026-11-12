@@ -29,7 +29,7 @@ npm start
 5. **Admin** (`/admin`): open Pending ads and approve the ad you just posted. It now appears on the home page.
 6. **Promote**: from Profile, tap Promote on an ad, pick a package and pay with Telebirr or Chapa (mock).
 7. **Login** (`/login`): any phone number, any 6-digit code.
-8. Switch between EN and አማርኛ in the header at any point.
+8. Switch between English, አማርኛ and Afaan Oromoo in the header at any point.
 
 ## Good to know
 
@@ -46,7 +46,7 @@ npm start
 | Path | What it holds |
 | --- | --- |
 | `lib/data.ts` | All sample listings, sellers, chats, reports and packages |
-| `lib/i18n.ts` | Amharic translations of the UI labels |
+| `lib/i18n.ts` | Amharic and Afaan Oromoo translations of the UI labels |
 | `lib/store.tsx` | In-memory app state (language, favorites, login, ads, chats, toasts) |
 | `components/` | Shared UI: cards, sheets, header, tab bar |
 | `app/(site)/` | Buyer and seller screens |

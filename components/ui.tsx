@@ -267,19 +267,28 @@ export function Avatar({ name, size = 48 }: { name: string; size?: number }) {
   );
 }
 
+const LANGS = [
+  { code: 'en', short: 'EN', full: 'English' },
+  { code: 'am', short: 'አማ', full: 'አማርኛ' },
+  { code: 'om', short: 'OM', full: 'Oromoo' },
+] as const;
+
 export function LangToggle() {
   const { lang, setLang } = useStore();
   return (
     <div className="flex rounded-full bg-mist p-1 text-[13px] font-semibold" role="group" aria-label="Language">
-      {(['en', 'am'] as const).map((l) => (
+      {LANGS.map((l) => (
         <button
-          key={l}
+          key={l.code}
           type="button"
-          onClick={() => setLang(l)}
-          aria-pressed={lang === l}
-          className={`rounded-full px-3 py-1.5 transition ${lang === l ? 'bg-white text-brand-700 shadow-card' : 'text-ink/55'}`}
+          onClick={() => setLang(l.code)}
+          aria-pressed={lang === l.code}
+          aria-label={l.full}
+          className={`whitespace-nowrap rounded-full px-2 py-1.5 transition lg:px-3 ${lang === l.code ? 'bg-white text-brand-700 shadow-card' : 'text-ink/55'}`}
         >
-          {l === 'en' ? 'EN' : 'አማርኛ'}
+          {/* Short labels keep three languages inside a narrow header. */}
+          <span className="lg:hidden">{l.short}</span>
+          <span className="hidden lg:inline">{l.full}</span>
         </button>
       ))}
     </div>
@@ -292,7 +301,7 @@ export function Logo() {
       <span className="grid h-9 w-9 -rotate-6 place-items-center rounded-xl bg-brand-600 font-display text-lg font-extrabold text-white">
         <span className="rotate-6">S</span>
       </span>
-      <span className="font-display text-[21px] font-extrabold tracking-tight">
+      <span className="whitespace-nowrap font-display text-[19px] font-extrabold tracking-tight md:text-[21px]">
         Shamil <span className="text-brand-600">Shop</span>
       </span>
     </Link>
