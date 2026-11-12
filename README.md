@@ -34,7 +34,9 @@ npm start
 ## Good to know
 
 - State lives in memory. Refreshing the page resets favorites, posted ads and admin actions.
-- Listing photos are generated placeholders. Photos you add while posting an ad are previewed locally and never uploaded.
+- Listing photos are in `public/listings`, named `<listing id>-<number>.jpg` (for example `v1-1.jpg`), and listed per listing in `lib/photos.json`. To use your own photo, replace the file with one of the same name, or add a file and its path to `lib/photos.json`. A listing with no photos shows a tinted placeholder.
+- The bundled photos come from Wikimedia Commons under free licenses. Author, license and source for each file are in `public/listings/credits.json`; keep that attribution if you publish the demo.
+- Photos you add while posting an ad are previewed locally and never uploaded.
 - The admin "Categories" visibility switches are illustrative and do not hide categories on the site.
 - The dashboard's total and daily counts sit on a fixed base number so they look like a live marketplace; Pending and Reported are real counts from the demo data.
 - Fonts load from Google Fonts, so the first load needs an internet connection to look right.

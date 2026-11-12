@@ -1,4 +1,5 @@
 // All demo data lives here. Nothing is fetched from a server.
+import PHOTOS from './photos.json';
 
 export type Cat =
   | 'vehicles'
@@ -272,7 +273,14 @@ const otherListings: Listing[] = [
     specs: [['Brand', 'JBL'], ['Model', 'PartyBox 310'], ['Condition', 'New']] }),
 ];
 
-export const LISTINGS: Listing[] = [...vehicleListings, ...otherListings];
+// Real photos live in public/listings and are listed per listing id in photos.json.
+// A listing with no entry there falls back to the tinted placeholder.
+const photoMap = PHOTOS as Record<string, string[]>;
+
+export const LISTINGS: Listing[] = [...vehicleListings, ...otherListings].map((l) => {
+  const images = photoMap[l.id];
+  return images?.length ? { ...l, images, photos: images.length } : l;
+});
 
 // ---- Post-an-ad form fields per category
 export interface Field {

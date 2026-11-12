@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import {
   BadgeCheck,
   Briefcase,
@@ -42,9 +42,19 @@ const hueOf = (id: string) => {
 /** Listing photo: an uploaded preview if there is one, otherwise a tinted placeholder. */
 export function Thumb({ listing, index = 0, className = '' }: { listing: Listing; index?: number; className?: string }) {
   const src = listing.images?.[index];
-  if (src) {
-    // eslint-disable-next-line @next/next/no-img-element
-    return <img src={src} alt={listing.title} className={`h-full w-full object-cover ${className}`} draggable={false} />;
+  const [broken, setBroken] = useState(false);
+  if (src && !broken) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={src}
+        alt={listing.title}
+        loading="lazy"
+        draggable={false}
+        onError={() => setBroken(true)}
+        className={`h-full w-full bg-mist object-cover ${className}`}
+      />
+    );
   }
   const Icon = CAT_ICON[listing.cat];
   const h = (hueOf(listing.id) + index * 24) % 360;
@@ -132,10 +142,11 @@ export function ListingCard({ listing, wide = false }: { listing: Listing; wide?
   return (
     <Link
       href={`/listing/${listing.id}`}
-      className={`card group block overflow-hidden transition hover:shadow-lift ${wide ? 'w-[250px] shrink-0 snap-start' : ''}`}
+      className={`card group block overflow-hidden transition duration-300 ease-out hover:-translate-y-1 hover:shadow-lift focus-visible:-translate-y-1 focus-visible:shadow-lift ${wide ? 'w-[250px] shrink-0 snap-start' : ''}`}
     >
-      <div className="relative aspect-[4/3]">
-        <Thumb listing={listing} />
+      <div className="relative aspect-[4/3] overflow-hidden">
+        {/* Photo zooms in while the card is hovered or focused, and eases back out after. */}
+        <Thumb listing={listing} className="transition-transform duration-500 ease-out group-hover:scale-110 group-focus-visible:scale-110" />
         <div className="absolute left-2 top-2 flex flex-wrap gap-1">
           <Badges listing={listing} />
         </div>
