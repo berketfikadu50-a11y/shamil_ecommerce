@@ -3,16 +3,18 @@
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Suspense, useState } from 'react';
-import { Bell, ChevronRight, Globe, Heart, LayoutDashboard, LogOut, Megaphone, UserRound, Zap } from 'lucide-react';
+import { Bell, ChevronRight, Globe, Heart, LayoutDashboard, LogOut, Megaphone, Truck, UserRound, Zap } from 'lucide-react';
+import { track } from '@/lib/delivery';
 import { sellerById } from '@/lib/data';
-import { useStore } from '@/lib/store';
+import { useNow, useStore } from '@/lib/store';
 import { Avatar, Badges, Empty, Grid, LangToggle, Price, Thumb } from '@/components/ui';
 
 const AD_TABS = ['Active', 'Pending', 'Sold'] as const;
 const SECTIONS = ['My ads', 'Favorites', 'Settings'] as const;
 
 function ProfileScreen() {
-  const { t, user, logout, listings, favs, setStatus, toast } = useStore();
+  const { t, user, logout, listings, favs, setStatus, toast, deliveries } = useStore();
+  const now = useNow(5000);
   const params = useSearchParams();
   const initial = params.get('tab');
   const [section, setSection] = useState<(typeof SECTIONS)[number]>(initial === 'Favorites' || initial === 'Settings' ? initial : 'My ads');
@@ -37,6 +39,8 @@ function ProfileScreen() {
     Sold: mine.filter((l) => l.status === 'sold'),
   };
   const favItems = listings.filter((l) => favs.includes(l.id));
+  const activeDeliveries =
+    now === null ? 0 : deliveries.filter((d) => d.mine && ['placed', 'assigned', 'on_the_way'].includes(track(d, now).stage)).length;
 
   return (
     <div className="mx-auto max-w-3xl pt-5">
@@ -48,6 +52,19 @@ function ProfileScreen() {
           <p className="text-sm text-white/75">{t('Member since {y}', { y: me.since })}</p>
         </div>
       </div>
+
+      <Link href="/deliveries" className="card mt-3 flex items-center gap-3 p-3.5 transition hover:shadow-lift">
+        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-700">
+          <Truck size={20} />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block font-semibold">{t('My deliveries')}</span>
+          <span className="block truncate text-sm text-ink/55">
+            {activeDeliveries > 0 ? t('{n} on the way', { n: activeDeliveries }) : t('Track items delivered to your door')}
+          </span>
+        </span>
+        <ChevronRight size={18} className="shrink-0 text-ink/30" />
+      </Link>
 
       <div className="mt-5 grid grid-cols-3 rounded-2xl bg-mist p-1 text-sm font-semibold" role="tablist">
         {SECTIONS.map((s) => (

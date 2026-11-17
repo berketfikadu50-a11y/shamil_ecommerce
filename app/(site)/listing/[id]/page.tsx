@@ -7,6 +7,7 @@ import { CalendarDays, ChevronLeft, ChevronRight, Flag, Heart, MapPin, MessageCi
 import { place, sellerById } from '@/lib/data';
 import { useStore } from '@/lib/store';
 import { Avatar, Badges, Empty, ListingCard, Price, SellerBadge, Sheet, Thumb, useAgo } from '@/components/ui';
+import { DeliveryOffer } from '@/components/delivery';
 
 const REASONS = ['Scam or fraud', 'Wrong price or details', 'Already sold', 'Duplicate ad'];
 
@@ -151,6 +152,8 @@ export default function ListingPage() {
           </button>
         </div>
 
+        <DeliveryOffer listing={listing} className="mt-4 flex md:hidden" />
+
         <section className="mt-7">
           <h2 className="h-section mb-3">{t('Key details')}</h2>
           <dl className="overflow-hidden rounded-2xl border border-line">
@@ -215,6 +218,7 @@ export default function ListingPage() {
               <div className="mt-4 hidden gap-2 md:flex md:flex-col">{contact}</div>
             )}
           </div>
+          <DeliveryOffer listing={listing} className="mt-3 hidden md:flex" />
         </div>
       </aside>
 

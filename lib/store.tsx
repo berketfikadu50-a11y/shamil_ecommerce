@@ -15,6 +15,7 @@ import {
   type Status,
 } from './data';
 import { AM, OM } from './i18n';
+import { makeDelivery, pickRider, pickupFor, quote, seedDeliveries, track, type Delivery, type OrderInput } from './delivery';
 
 export type Lang = 'en' | 'am' | 'om';
 const DICT: Record<Lang, Record<string, string> | null> = { en: null, am: AM, om: OM };
@@ -43,6 +44,11 @@ interface Store {
   markRead: (convoId: string) => void;
   users: AdminUser[];
   toggleUser: (id: string) => void;
+  deliveries: Delivery[];
+  placeOrder: (o: OrderInput) => string;
+  assignRider: (id: string, riderId: string) => void;
+  cancelDelivery: (id: string) => void;
+  rateDelivery: (id: string, stars: number) => void;
 }
 
 const Ctx = createContext<Store | null>(null);
@@ -64,6 +70,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [reports, setReports] = useState<Report[]>(REPORTS);
   const [convos, setConvos] = useState<Convo[]>(CONVOS);
   const [users, setUsers] = useState<AdminUser[]>(USERS);
+  const [deliveries, setDeliveries] = useState<Delivery[]>(() => seedDeliveries(Date.now()));
   const seq = useRef(0);
 
   useEffect(() => {
@@ -130,8 +137,40 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       markRead: (convoId) => setConvos((cs) => cs.map((c) => (c.id === convoId && c.unread ? { ...c, unread: 0 } : c))),
       users,
       toggleUser: (id) => setUsers((us) => us.map((u) => (u.id === id ? { ...u, suspended: !u.suspended } : u))),
+      deliveries,
+      placeOrder: (o) => {
+        const now = Date.now();
+        const id = `D-${24830 + deliveries.length}`;
+        const intercity = quote(o.listing.cat, pickupFor(o.listing), o.dropoff, o.speed).intercity;
+        const busy = new Set(
+          deliveries.filter((d) => d.riderId && !d.cancelled && track(d, now).stage !== 'delivered').map((d) => d.riderId as string),
+        );
+        // Dispatch is simulated: a rider accepts a few seconds after the order, then the trip plays out in about a minute.
+        const d = makeDelivery({
+          id,
+          listing: o.listing,
+          dropoff: o.dropoff,
+          note: o.note,
+          buyer: 'Dawit Mekonnen',
+          phone: o.phone,
+          mine: true,
+          speed: o.speed,
+          payment: o.payment,
+          createdAt: now,
+          assignedAt: now + 6000,
+          riderId: pickRider(o.listing.cat, o.listing.city, intercity, busy),
+          toPickupMs: 20_000,
+          toDropMs: intercity ? 26 * 3600_000 : 60_000,
+        });
+        setDeliveries((ds) => [d, ...ds]);
+        return id;
+      },
+      assignRider: (id, riderId) =>
+        setDeliveries((ds) => ds.map((d) => (d.id === id ? { ...d, riderId, assignedAt: Date.now() } : d))),
+      cancelDelivery: (id) => setDeliveries((ds) => ds.map((d) => (d.id === id ? { ...d, cancelled: true } : d))),
+      rateDelivery: (id, stars) => setDeliveries((ds) => ds.map((d) => (d.id === id ? { ...d, rating: stars } : d))),
     }),
-    [lang, t, listings, favs, user, toast, reports, convos, users],
+    [lang, t, listings, favs, user, toast, reports, convos, users, deliveries],
   );
 
   return (
@@ -163,3 +202,14 @@ export function useFakeLoad(key: string, ms = 550) {
 }
 
 export const fmt = (n: number) => n.toLocaleString('en-US');
+
+/** Current time, ticking. Null until mounted, so time-based text never mismatches the server render. */
+export function useNow(ms = 1000) {
+  const [now, setNow] = useState<number | null>(null);
+  useEffect(() => {
+    setNow(Date.now());
+    const id = setInterval(() => setNow(Date.now()), ms);
+    return () => clearInterval(id);
+  }, [ms]);
+  return now;
+}

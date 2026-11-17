@@ -3,24 +3,26 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
-import { ArrowLeft, Clock, Flag, FolderTree, LayoutDashboard, Users } from 'lucide-react';
+import { ArrowLeft, Clock, Flag, FolderTree, LayoutDashboard, Truck, Users } from 'lucide-react';
 import { useStore } from '@/lib/store';
 import { LangToggle } from '@/components/ui';
 
 const NAV = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/pending', label: 'Pending ads', icon: Clock },
+  { href: '/admin/deliveries', label: 'Deliveries', icon: Truck },
   { href: '/admin/reports', label: 'Reports', icon: Flag },
   { href: '/admin/users', label: 'Users', icon: Users },
   { href: '/admin/categories', label: 'Categories', icon: FolderTree },
 ];
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
-  const { t, listings, reports } = useStore();
+  const { t, listings, reports, deliveries } = useStore();
   const pathname = usePathname();
   const counts: Record<string, number> = {
     '/admin/pending': listings.filter((l) => l.status === 'pending').length,
     '/admin/reports': reports.filter((r) => r.open).length,
+    '/admin/deliveries': deliveries.filter((d) => !d.cancelled && !d.riderId).length,
   };
 
   return (

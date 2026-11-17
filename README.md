@@ -28,8 +28,10 @@ npm start
 4. **Post an ad** (`/post`): go through the five steps. The ad lands in Profile under Pending.
 5. **Admin** (`/admin`): open Pending ads and approve the ad you just posted. It now appears on the home page.
 6. **Promote**: from Profile, tap Promote on an ad, pick a package and pay with Telebirr or Chapa (mock).
-7. **Login** (`/login`): any phone number, any 6-digit code.
-8. Switch between English, አማርኛ and Afaan Oromoo in the header at any point.
+7. **Delivery**: open a phone, electronics, furniture or fashion listing and tap **Get it delivered**. Set the drop-off by tapping the map, dragging the house pin, choosing an area or using your current location. The fee is calculated from the road distance. After **Place order**, the tracking page shows a rider being assigned, collecting the item and riding to you, in about a minute and a half. Rate the delivery at the end. Past and live orders are under Profile → My deliveries.
+8. **Delivery admin** (`/admin/deliveries`): a live map of every active delivery, rider assignment for orders waiting for a rider, the rider list, and delivery zones with their prices.
+9. **Login** (`/login`): any phone number, any 6-digit code.
+10. Switch between English, አማርኛ and Afaan Oromoo in the header at any point.
 
 ## Good to know
 
@@ -40,6 +42,9 @@ npm start
 - The admin "Categories" visibility switches are illustrative and do not hide categories on the site.
 - The dashboard's total and daily counts sit on a fixed base number so they look like a live marketplace; Pending and Reported are real counts from the demo data.
 - Fonts load from Google Fonts, so the first load needs an internet connection to look right.
+- **Delivery is simulated.** Rider dispatch and movement are played back on a timer, and the route drawn on the map is a smooth curve, not a real road route. Distances are straight-line distance × 1.35. Pricing, zones and riders are in `lib/delivery.ts`.
+- **Map tiles come from OpenStreetMap's public tile server**, which is fine for a demo but not allowed for production traffic. A real launch needs a tile provider (for example Mapbox, MapTiler or Stadia Maps) and a routing service for real road distances and routes.
+- "Use my current location" asks the browser for location permission. If you are outside a delivery zone, the page says delivery isn't available there.
 
 ## Where things are
 
@@ -47,7 +52,9 @@ npm start
 | --- | --- |
 | `lib/data.ts` | All sample listings, sellers, chats, reports and packages |
 | `lib/i18n.ts` | Amharic and Afaan Oromoo translations of the UI labels |
-| `lib/store.tsx` | In-memory app state (language, favorites, login, ads, chats, toasts) |
+| `lib/store.tsx` | In-memory app state (language, favorites, login, ads, chats, deliveries, toasts) |
+| `lib/delivery.ts` | Delivery zones, pricing, riders, routes and the simulated tracking |
+| `components/map-inner.tsx` | The Leaflet map used for checkout, tracking and the admin live map |
 | `components/` | Shared UI: cards, sheets, header, tab bar |
 | `app/(site)/` | Buyer and seller screens |
 | `app/admin/` | Admin panel |
